@@ -556,46 +556,46 @@ function GiftedChat<TMessage extends IMessage = IMessage> (
       setTimeout(() => scrollToBottom(false), 200)
   }, [messages?.length, inverted, scrollToBottom])
 
-  useAnimatedReaction(
-    () => keyboard.height.value,
-    (value, prevValue) => {
-      if (prevValue && value !== prevValue) {
-        const isKeyboardMovingUp = value > prevValue
-        if (isKeyboardMovingUp !== trackingKeyboardMovement.value) {
-          trackingKeyboardMovement.value = isKeyboardMovingUp
-          keyboardOffsetBottom.value = withTiming(
-            isKeyboardMovingUp ? insets.bottom + bottomOffset : 0,
-            {
-              // If `bottomOffset` exists, we change the duration to a smaller value to fix the delay in the keyboard animation speed
-              duration: bottomOffset ? 150 : 400,
-            }
-          )
+  // useAnimatedReaction(
+  //   () => keyboard.height.value,
+  //   (value, prevValue) => {
+  //     if (prevValue && value !== prevValue) {
+  //       const isKeyboardMovingUp = value > prevValue
+  //       if (isKeyboardMovingUp !== trackingKeyboardMovement.value) {
+  //         trackingKeyboardMovement.value = isKeyboardMovingUp
+  //         keyboardOffsetBottom.value = withTiming(
+  //           isKeyboardMovingUp ? insets.bottom + bottomOffset : 0,
+  //           {
+  //             // If `bottomOffset` exists, we change the duration to a smaller value to fix the delay in the keyboard animation speed
+  //             duration: bottomOffset ? 150 : 400,
+  //           }
+  //         )
 
-          if (isKeyboardMovingUp)
-            runOnJS(handleTextInputFocusWhenKeyboardShow)()
-          else
-            runOnJS(handleTextInputFocusWhenKeyboardHide)()
+  //         if (isKeyboardMovingUp)
+  //           runOnJS(handleTextInputFocusWhenKeyboardShow)()
+  //         else
+  //           runOnJS(handleTextInputFocusWhenKeyboardHide)()
 
-          if (value === 0) {
-            runOnJS(enableTyping)()
-          } else {
-            runOnJS(disableTyping)()
-            runOnJS(debounceEnableTyping)()
-          }
-        }
-      }
-    },
-    [
-      keyboard,
-      trackingKeyboardMovement,
-      insets,
-      handleTextInputFocusWhenKeyboardHide,
-      handleTextInputFocusWhenKeyboardShow,
-      enableTyping,
-      disableTyping,
-      debounceEnableTyping,
-    ]
-  )
+  //         if (value === 0) {
+  //           runOnJS(enableTyping)()
+  //         } else {
+  //           runOnJS(disableTyping)()
+  //           runOnJS(debounceEnableTyping)()
+  //         }
+  //       }
+  //     }
+  //   },
+  //   [
+  //     keyboard,
+  //     trackingKeyboardMovement,
+  //     insets,
+  //     handleTextInputFocusWhenKeyboardHide,
+  //     handleTextInputFocusWhenKeyboardShow,
+  //     enableTyping,
+  //     disableTyping,
+  //     debounceEnableTyping,
+  //   ]
+  // )
 
   return (
     <GiftedChatContext.Provider value={contextValues}>
