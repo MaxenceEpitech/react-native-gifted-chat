@@ -10,6 +10,7 @@ import {
 import { GiftedAvatar } from './GiftedAvatar'
 import { StylePropType, isSameUser, isSameDay } from './utils'
 import { IMessage, LeftRightStyle, User } from './Models'
+import { MIN_COMPOSER_HEIGHT } from './Constant'
 
 interface Styles {
   left: {
@@ -33,8 +34,8 @@ const styles: Styles = {
       alignSelf: 'flex-start',
     },
     image: {
-      height: 36,
-      width: 36,
+      height: MIN_COMPOSER_HEIGHT,
+      width: MIN_COMPOSER_HEIGHT,
       borderRadius: 18,
     },
   }),
@@ -46,8 +47,8 @@ const styles: Styles = {
       alignSelf: 'flex-start',
     },
     image: {
-      height: 36,
-      width: 36,
+      height: MIN_COMPOSER_HEIGHT,
+      width: MIN_COMPOSER_HEIGHT,
       borderRadius: 18,
     },
   }),

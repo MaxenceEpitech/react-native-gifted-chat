@@ -316,6 +316,12 @@ export default class MessageContainer<
 
   keyExtractor = (item: TMessage) => `${item._id}`
 
+  // @ts-expect-error CellRendererComponent is not in types
+  renderCell ({ style, ...props }) {
+    const zIndex = { zIndex: props?.item?.chatMessage?.isDragging === true ? 3 : 0 }
+    return <View style={[style, zIndex]} {...props} />
+  }
+
   render () {
     const { inverted } = this.props
 
@@ -326,6 +332,7 @@ export default class MessageContainer<
         }
       >
         <FlatList
+          CellRendererComponent={this.renderCell}
           ref={this.props.forwardRef}
           extraData={[this.props.extraData, this.props.isTyping]}
           keyExtractor={this.keyExtractor}

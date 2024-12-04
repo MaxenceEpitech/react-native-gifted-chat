@@ -5,7 +5,6 @@ import React, {
   useRef,
   useState,
   useCallback,
-  MutableRefObject,
 } from 'react'
 import {
   ActionSheetOptions,
@@ -57,12 +56,8 @@ import * as utils from './utils'
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
-  useAnimatedReaction,
   useSharedValue,
-  withTiming,
-  runOnJS,
 } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 dayjs.extend(localizedFormat)
 
@@ -250,7 +245,6 @@ function GiftedChat<TMessage extends IMessage = IMessage> (
     textInputProps,
     renderChatFooter = null,
     renderInputToolbar = null,
-    bottomOffset = 0,
     keyboardShouldPersistTaps = Platform.select({
       ios: 'never',
       android: 'always',
@@ -276,8 +270,6 @@ function GiftedChat<TMessage extends IMessage = IMessage> (
     [props.textInputRef]
   )
 
-  const isTextInputWasFocused: MutableRefObject<boolean> = useRef(false)
-
   const [isInitialized, setIsInitialized] = useState<boolean>(false)
   const [composerHeight, setComposerHeight] = useState<number>(
     minComposerHeight!
@@ -286,9 +278,7 @@ function GiftedChat<TMessage extends IMessage = IMessage> (
   const [isTypingDisabled, setIsTypingDisabled] = useState<boolean>(false)
 
   const keyboard = useAnimatedKeyboard({ isStatusBarTranslucentAndroid })
-  const trackingKeyboardMovement = useSharedValue(false)
   const debounceEnableTypingTimeoutId = useRef<ReturnType<typeof setTimeout>>()
-  const insets = useSafeAreaInsets()
   const keyboardOffsetBottom = useSharedValue(0)
 
   const contentStyleAnim = useAnimatedStyle(
@@ -310,34 +300,6 @@ function GiftedChat<TMessage extends IMessage = IMessage> (
     [props.text]
   )
 
-  /**
-   * Store text input focus status when keyboard hide to retrieve
-   * it afterwards if needed.
-   * `onKeyboardWillHide` may be called twice in sequence so we
-   * make a guard condition (eg. showing image picker)
-   */
-  const handleTextInputFocusWhenKeyboardHide = useCallback(() => {
-    if (!isTextInputWasFocused.current)
-      isTextInputWasFocused.current =
-        textInputRef.current?.isFocused() || false
-  }, [textInputRef])
-
-  /**
-   * Refocus the text input only if it was focused before showing keyboard.
-   * This is needed in some cases (eg. showing image picker).
-   */
-  const handleTextInputFocusWhenKeyboardShow = useCallback(() => {
-    if (
-      textInputRef.current &&
-      isTextInputWasFocused &&
-      !textInputRef.current.isFocused()
-    )
-      textInputRef.current.focus()
-
-    // Reset the indicator since the keyboard is shown
-    isTextInputWasFocused.current = false
-  }, [textInputRef])
-
   const disableTyping = useCallback(() => {
     clearTimeout(debounceEnableTypingTimeoutId.current)
     setIsTypingDisabled(true)
@@ -347,13 +309,6 @@ function GiftedChat<TMessage extends IMessage = IMessage> (
     clearTimeout(debounceEnableTypingTimeoutId.current)
     setIsTypingDisabled(false)
   }, [])
-
-  const debounceEnableTyping = useCallback(() => {
-    clearTimeout(debounceEnableTypingTimeoutId.current)
-    debounceEnableTypingTimeoutId.current = setTimeout(() => {
-      enableTyping()
-    }, 50)
-  }, [enableTyping])
 
   const scrollToBottom = useCallback(
     (isAnimated = true) => {
